@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <map>
+#include <time.h>
 
 template<class Key>
 class not_found_exception : public std::exception
@@ -68,7 +69,7 @@ const Value& my_dictionary<Key, Value>::get(const Key& key) const
 template<class Key, class Value>
 void my_dictionary<Key, Value>::set(const Key& key, const Value& value)
 {
-    _dictionary[key] = value;
+    _dictionary.insert(std::make_pair(key, value));
 }
 
 template<class Key, class Value>
@@ -81,13 +82,20 @@ int main()
 {
     my_dictionary<int, int> md;
     try {
-        md.set(1, 10);
-        std::cout << md.get(2);
+        clock_t start = clock();
+        
+        for (int i = 0; i < 100000; i++) {
+            md.set(i, 10);
+        }
+
+        clock_t end = clock();
+        double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+        printf("The time: %f seconds\n", seconds);
     }
-    catch(key_not_found<int> exc) {
+    catch (key_not_found<int> exc) {
         std::cout << exc.what() << " " << exc.get_key();
     }
-    
+
 }
 
 
